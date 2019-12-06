@@ -1,6 +1,9 @@
 import re
+import time
 import string
-import urllib
+#import urllib
+import requests
+import urllib.request
 from bs4 import BeautifulSoup
 
 def diff(l1, l2):
@@ -10,9 +13,9 @@ def diff(l1, l2):
             list_diff.remove(item)
     return list_diff
 
-def deck_swap(lhs, rhs):
-    for first, second in zip(lhs, rhs):
-        print(first, "->", second)
+def deck_swap(lhs, rhs, prices):
+    for first, second, price in zip(lhs, rhs, prices):
+        print(first, "->", second, "[", price, "]")
 
 if __name__ == "__main__":
     deck_lists = []
@@ -47,4 +50,15 @@ if __name__ == "__main__":
 
     lhs = diff(deck_lists[0], deck_lists[1])
     rhs = diff(deck_lists[1], deck_lists[0])
-    deck_swap(lhs, rhs)
+    # this works but let's throttle requests to the api
+    # prices = [requests.get("https://api.scryfall.com/cards/named?exact=" + card_name).json()["prices"]["usd"] for card_name in rhs]
+    prices = []
+    for card_name in rhs:
+        price = requests.get("https://api.scryfall.com/cards/named?exact=" + card_name).json()["prices"]["usd"]
+        if price:
+            prices.append(float(price))
+        else:
+            prices.append(0.0)
+        time.sleep(.1)
+    deck_swap(lhs, rhs, prices)
+    print("Total price:", sum(prices))
