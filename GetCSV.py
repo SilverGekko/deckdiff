@@ -17,11 +17,8 @@ def deck_swap(lhs, rhs, prices):
     for first, second, price in zip(lhs, rhs, prices):
         print(first, "->", second, "[", price, "]")
 
-if __name__ == "__main__":
+def deck_diff(urls):
     deck_lists = []
-    urls = [
-    "https://tappedout.net/mtg-decks/21-11-19-marchesa-aristocrats/",
-    "https://tappedout.net/mtg-decks/varina-kitchen-sink/"]
     for url in urls:
         html = urllib.request.urlopen(url).read()
         soup = BeautifulSoup(html, features="lxml")
@@ -62,3 +59,9 @@ if __name__ == "__main__":
         time.sleep(.1)
     deck_swap(lhs, rhs, prices)
     print("Total price:", sum(prices))
+
+if __name__ == "__main__":
+    urls = [
+    "https://tappedout.net/mtg-decks/21-11-19-marchesa-aristocrats/",
+    "https://tappedout.net/mtg-decks/06-12-19-wizard-tribal"]
+    deck_diff(urls)
