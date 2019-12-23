@@ -14,10 +14,13 @@ def diff(l1, l2):
     return list_diff
 
 def deck_swap(lhs, rhs, prices):
+    swapped_cards = []
     for first, second, price in zip(lhs, rhs, prices):
-        print(first, "->", second, "[", price, "]")
+        swapped_cards.append(first + " -> " + second + " [$ " + str(price) + "]")
+        # print(first, "->", second, "[$", price, "]")
+    return swapped_cards
 
-def deck_diff(urls):
+def calc_deck_diff(urls):
     deck_lists = []
     for url in urls:
         html = urllib.request.urlopen(url).read()
@@ -40,7 +43,7 @@ def deck_diff(urls):
         for card in deck_list:
             qty = card.split(' ')[0]
             name = re.search(r'[A-Za-z]+[A-Za-z \',\-]*(?= \()', card).group(0)
-            for x in range(int(qty)):
+            for _ in range(int(qty)):
                 singleton_list.append(name)
 
         deck_lists.append(singleton_list)
@@ -50,18 +53,27 @@ def deck_diff(urls):
     # this works but let's throttle requests to the api
     # prices = [requests.get("https://api.scryfall.com/cards/named?exact=" + card_name).json()["prices"]["usd"] for card_name in rhs]
     prices = []
-    for card_name in rhs:
-        price = requests.get("https://api.scryfall.com/cards/named?exact=" + card_name).json()["prices"]["usd"]
-        if price:
-            prices.append(float(price))
-        else:
-            prices.append(0.0)
-        time.sleep(.1)
-    deck_swap(lhs, rhs, prices)
-    print("Total price:", sum(prices))
+
+    query_string = "+or+".join(['name:/^' + card + '$/+usd>0' for card in rhs])
+    query = "https://api.scryfall.com/cards/search?q=" + query_string
+    price_list = requests.get(query)
+    # print(query)
+
+    # for card_name in rhs:
+    #     # price = requests.get("https://api.scryfall.com/cards/named?exact=" + card_name).json()["prices"]["usd"]
+    #     if price:
+    #         prices.append(float(price))
+    #     else:
+    #         prices.append(0.0)
+    #     time.sleep(.075)
+    for card in price_list.json()['data']:
+        prices.append(float(card['prices']['usd']))
+    swapped_cards = deck_swap(lhs, rhs, prices)
+    # print("Total price:", round(sum(prices)))
+    return swapped_cards
 
 if __name__ == "__main__":
     urls = [
     "https://tappedout.net/mtg-decks/21-11-19-marchesa-aristocrats/",
     "https://tappedout.net/mtg-decks/06-12-19-wizard-tribal"]
-    deck_diff(urls)
+    calc_deck_diff(urls)

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container justify-content-md-center align-items-center">
+<div class="row">
+    <div class="col-xs-6">
+        <h1>Decks:</h1>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.deck1.label }}<br>
+                {{ form.deck1(size=36) }}
+            </p>
+            <p>
+                {{ form.deck2.label }}<br>
+                {{ form.deck2(size=36) }}
+            <p class="text-center">{{ form.submit() }}</p>
+        </form>
+    </div>
+    <div class="col-xs-6">
+        {% if deck %}
+        <h1>Acquire:</h1>
+        <div style="overflow-y: auto; height: 80vh;">
+            <ul class="list-group">
+            {% for card in deck %}
+                <li class="list-group-item">{{ card }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+{% endif %}
+{% endblock %}

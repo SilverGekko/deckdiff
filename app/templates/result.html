@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% if deck %}
+    {% block content %}
+        <h1>Decks:</h1>
+        <form action="" method="post" novalidate>
+            {% for card in deck %}
+            <div><p>{{ card }}</p></div>
+            {% endfor %}
+        </form>
+    {% endblock %}
+{% endif %}

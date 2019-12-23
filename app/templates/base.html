@@ -1,0 +1,28 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+  {% if title %}{{ title }} - Fuck me in the ass jerry how are ya{%  endif%}
+  {% endblock%}
+  {% block navbar %}
+  <nav class="navbar navbar-default">
+    <div>
+        DeckDiff
+        <a href="/index">Home</a>,
+        <a href="/login">Login</a>,
+        <a href="/other">Other</a>,
+        <a href="/input">Input</a>
+      </div>
+  </nav>
+{% endblock %}
+<html>
+  <head>
+  {% if title %}
+  <title>{{ title }}</title>
+  {% else %}
+  <title>No Title Supplied</title>
+  {% endif %}
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+</html>
